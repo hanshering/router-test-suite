@@ -1,0 +1,34 @@
+interface {{ interface }}
+{% for ipv4 in local_ipv4 %}
+ ip address {{ ipv4 }}/30 secondary
+{% endfor %}
+{% for ipv6 in local_ipv6 %}
+ ipv6 address {{ ipv6 }}/126
+{% endfor %}
+!
+router bgp {{ local_as }}
+{% for neighbor in neighbors %}
+ neighbor {{ neighbor.ipv4 }} remote-as {{ neighbor.as }}
+ neighbor {{ neighbor.ipv4 }} maximum-routes 0
+{# neighbor {{ neighbor.ipv4 }} soft-reconfiguration inbound #}
+{% endfor %}
+{% for neighbor in neighbors %}
+ neighbor {{ neighbor.ipv6 }} remote-as {{ neighbor.as }}
+ neighbor {{ neighbor.ipv6 }} maximum-routes 0
+{% endfor %}
+ !
+ address-family ipv4
+{% for neighbor in neighbors %}
+  neighbor {{ neighbor.ipv4 }} activate
+{#  neighbor {{ neighbor.ipv4 }} prefix-list DENY-ALL out #}
+{% endfor %}
+{% for neighbor in neighbors %}
+  no neighbor {{ neighbor.ipv6 }} activate
+{% endfor %}
+ !
+ address-family ipv6
+{% for neighbor in neighbors %}
+  neighbor {{ neighbor.ipv6 }} activate
+{% endfor %}
+!
+

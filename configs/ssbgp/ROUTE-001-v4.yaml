@@ -1,0 +1,22 @@
+---
+PREFIXES_FILE: "../router-test-suite/data/v4_AS1299_full_table_20190222.txt"
+
+NEXT_HOP: "self"
+
+WAITING_TIME: 10 # Time to wait between iterations
+
+INITIAL_WARMUP: 2000000 # Number of prefixes to send initially
+INITIAL_WAIT: 30 # Seconds to wait initially
+
+MAX_TOTAL: 2000000
+
+# On every iteration we will install randint(MIN_PREFIXES, MAX_PREFIXES) prefixes
+MIN_PREFIXES: 0
+MAX_PREFIXES: 0
+
+REMOVE_PREFIXES: 0 # Percentage of prefixes to remove on each iteration
+
+# Some parameters to add random AS PATHs to each advertisement
+NUM_DIFFERENT_AS_PATHS: 100
+MIN_AS_LENGTH: 0
+MAX_AS_LENGTH: 20

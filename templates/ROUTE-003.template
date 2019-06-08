@@ -1,0 +1,56 @@
+process announce-routes-v4 {
+    run /usr/bin/python2 {{ ssbgp_path }} {{ remote_ipv4 }} {{ local_as }} {{ssbgp_config_path}}{{ test_name }}-v4.yaml;
+    encoder json;
+}
+
+process announce-routes-v6 {
+    run /usr/bin/python2 {{ ssbgp_path }} {{ remote_ipv6 }} {{ local_as }} {{ssbgp_config_path}}{{ test_name }}-v6.yaml;
+    encoder json;
+}
+
+neighbor {{ remote_ipv4 }} {
+    peer-as {{ remote_as }};
+    local-as {{ local_as }};
+    local-address {{ local_ipv4 }};
+    router-id {{ local_ipv4 }};
+    group-updates true;
+    hold-time 180;
+    adj-rib-in false;
+
+    family {
+        ipv4 unicast;
+    }
+
+    capability {
+	asn4 enable;
+	graceful-restart 60;
+    }
+
+    api {
+	processes [ announce-routes-v4 ];
+    }
+}
+
+neighbor {{ remote_ipv6 }} {
+    peer-as {{ remote_as }};
+    local-as {{ local_as }};
+    local-address {{ local_ipv6 }};
+    router-id {{ local_ipv4 }};
+    group-updates true;
+    hold-time 180;
+    adj-rib-in false;
+
+    family {
+        ipv6 unicast;
+    }
+
+    capability {
+        asn4 enable;
+        route-refresh enable;
+        graceful-restart 60;
+    }
+
+    api {
+        processes [ announce-routes-v6 ];
+    }
+}

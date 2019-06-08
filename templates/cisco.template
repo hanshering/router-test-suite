@@ -1,0 +1,32 @@
+interface {{ interface }}
+{% for ipv4 in local_ipv4 %}
+ ip address {{ ipv4 }} 255.255.255.0 secondary
+{% endfor %}
+{% for ipv6 in local_ipv6 %}
+ ipv6 address {{ ipv6 }}/126
+{% endfor %}
+!
+router bgp {{ local_as }}
+{% for neighbor in neighbors %}
+ neighbor {{ neighbor.ipv4 }} remote-as {{ neighbor.as }}
+{% endfor %}
+{% for neighbor in neighbors %}
+ neighbor {{ neighbor.ipv6 }} remote-as {{ neighbor.as }}
+{% endfor %}
+ !
+ address-family ipv4
+{% for neighbor in neighbors %}
+  neighbor {{ neighbor.ipv4 }} activate
+{% endfor %}
+{% for neighbor in neighbors %}
+  no neighbor {{ neighbor.ipv6 }} activate
+{% endfor %}
+ exit-address-family
+ !
+ address-family ipv6
+{% for neighbor in neighbors %}
+  neighbor {{ neighbor.ipv6 }} activate
+{% endfor %}
+ exit-address-family
+!
+

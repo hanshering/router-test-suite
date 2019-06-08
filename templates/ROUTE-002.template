@@ -1,0 +1,66 @@
+neighbor {{ remote_ipv4 }} {
+    peer-as {{ remote_as }};
+    local-as {{ local_as }};
+    local-address {{ local_ipv4 }};
+    router-id {{ local_ipv4 }};
+    group-updates true;
+    hold-time 180;
+    adj-rib-in false;
+
+    family {
+        ipv4 unicast;
+    }
+
+    capability {
+        asn4 enable;
+        graceful-restart 60;
+    }
+
+    static {
+        # these go into LPM (Resource1-3)
+        # /8 split /28: 1,048,576 prefixes
+        # /8 split /26:   262,144 prefixes
+        # /8 split /25:   131,072 prefixes
+        # /8 split /22     16,384 prefixes
+        #
+        route 1.0.0.0/8 next-hop self split /29;
+        #route 2.0.0.0/8 next-hop self split /26;
+        #route 3.0.0.0/8 next-hop self split /25;
+        #route 4.0.0.0/8 next-hop self split /24;
+        #route 5.0.0.0/8 next-hop self split /22;
+        #route 6.0.0.0/8 next-hop self split /21;
+        #route 7.0.0.0/8 next-hop self split /20;
+        #route 8.0.0.0/8 next-hop self split /22;
+        #
+        # these go into LEM
+        # /5 split /24: 524,288 prefixes
+        # /6 split /24: 262,144 prefixes
+        #
+        route 32.0.0.0/5 next-hop self split /24;
+        route 40.0.0.0/6 next-hop self split /24
+    }
+}
+
+neighbor {{ remote_ipv6 }} {
+    peer-as {{ remote_as }};
+    local-as {{ local_as }};
+    local-address {{ local_ipv6 }};
+    router-id {{ local_ipv4 }};
+    group-updates true;
+    hold-time 180;
+    adj-rib-in false;
+
+    family {
+        ipv6 unicast;
+    }
+
+    capability {
+        asn4 enable;
+        route-refresh enable;
+        graceful-restart 60;
+    }
+    
+    static {
+        #route fd00:1::/64 next-hop self split /80;
+    }
+}
