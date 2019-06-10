@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+
 import sys
 from time import sleep
 
